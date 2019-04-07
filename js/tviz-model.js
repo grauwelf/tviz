@@ -87,10 +87,9 @@ function TvizModel() {
                 var nodes = [];
                 nodesData.features.forEach(function (data) {
                     data.id = data.properties.NODE_ID;
-                    data.name = data.properties.NODE_ID;
-                    var coords = self.projection(data.geometry.coordinates);
-                    data.x = coords[0];
-                    data.y = coords[1];
+                    data.name = data.properties.NODE_ID;                   
+                    data.x = data.geometry.coordinates[0];
+                    data.y = data.geometry.coordinates[1];
                     nodes[data.id] = data;
                 });
                 
