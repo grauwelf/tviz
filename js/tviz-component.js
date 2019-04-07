@@ -52,8 +52,8 @@ TvizComponent.prototype.prepareData = function() {
 };
 
 
-function TvizFlowMap(container) {
-    TvizComponent.call(this, container);
+function TvizFlowMap(container, width, height) {
+    TvizComponent.call(this, container, width, height);
 }
 
 TvizFlowMap.prototype = Object.create(TvizComponent.prototype);

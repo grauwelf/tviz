@@ -2,17 +2,21 @@
  * Entry point of application
  */
 
-var projection = d3.geoMercator()
-    //.scale(10000)
-    .center([35.2137, 31.7683]);
+var projection = d3.geoMercator();
 
 var svg = d3.select(".container")
   .append("svg")
-    .attr('width', 700)
-    .attr('height', 700)
-    .call(d3.zoom().scaleExtent([1 / 2 , 4]).on("zoom", zoomed));    
+    .attr('width', 650)
+    .attr('height', 650)
+    .call(d3.zoom().scaleExtent([1/16, 16]).on("zoom", zoomed));    
 
-var tvizMap = new TvizFlowMap(svg);
+var g = svg.append("g"); 
+
+function zoomed() {
+    g.attr("transform", d3.event.transform);
+}
+
+var tvizMap = new TvizFlowMap(g, svg.attr('width'), svg.attr('height'));
 
 var tvizModel = new TvizModel();
 tvizModel.projection = projection;
@@ -28,8 +32,3 @@ tvizModel.load(["json!data/israel.geojson",
         tvizMap.render();
    });
 
-function zoomed() {
-    var transform = d3.zoomTransform(this);
-    d3.select("svg")
-    .attr("transform", "translate(" + transform.x + "," + transform.y + ") scale(" + transform.k + ")");
-}
