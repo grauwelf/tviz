@@ -2,7 +2,7 @@
   "name": "tviz",
   "version": "1.0.0",
   "description": "Data-driven visualization of transport traffic",
-  "main": "app.js",
+  "main": "ja/app.js",
   "author": "grauwelf <grauwelf@gmail.com>",
   "license": "MIT",
   "dependencies": {
