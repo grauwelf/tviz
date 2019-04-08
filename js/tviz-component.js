@@ -66,29 +66,29 @@ TvizFlowMap.prototype.render = function () {
     var width = this.dim.width - margin.left - margin.right;
     var height = this.dim.height - margin.top - margin.bottom;      
      
-    var borders = d3.geoPath().projection(this.projection);
+    var smoothPath = d3.geoPath().projection(this.projection);
     
-    this.container.selectAll('path')
+    this.container.selectAll('.scene-map')
         .data(map.features)
       .enter()
       .append('path')
         .attr('class', 'scene-map')
-        .attr('d', borders);
-        
-    var connections = this.container.selectAll('.connect')
-        .data(network.links, function (d) { 
-            return (d.source && d.source.id) + '-' + (d.target && d.target.id); 
-        })
-      .enter()
-      .append('line')
-        //.attr('class', function (d) { return 'connect ' + d.line; })
-        .attr('class', 'scene-edge')
-        .attr('x1', function (d) { return d.source.x; })
-        .attr('y1', function (d) { return d.source.y; })
-        .attr('x2', function (d) { return d.target.x; })
-        .attr('y2', function (d) { return d.target.y; });
+        .attr('d', smoothPath);
     
-    var stations = this.container.selectAll('.station')
+    var connections = this.container.selectAll('.scene-edge')
+        .data(network.links)
+      .enter()
+      .append('path')
+      //.attr('class', function (d) { return 'connect ' + d.line; })
+        .attr('class', 'scene-edge')
+        .attr('d', function(d) {
+            return smoothPath({
+                'type': 'LineString',
+                'coordinates': d.path
+            });
+        });
+    
+    var stations = this.container.selectAll('.scene-node')
         .data(Object.values(network.nodes), function (d) { return d.name; })
       .enter()
       .append('circle')
