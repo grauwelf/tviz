@@ -98,10 +98,11 @@ function TvizModel() {
                 var links = [];
                 edgesData.features.forEach(function (data) {
                     links.push({
-                        color: "#ff0000",
-                        line: "42",
+                        //color: "#ff0000",
+                        //line: "42",
                         source: data.properties.FNODE_, 
-                        target: data.properties.TNODE_
+                        target: data.properties.TNODE_,
+                        path: data.geometry.coordinates
                     });
                 });
                 links.forEach(function (link) {

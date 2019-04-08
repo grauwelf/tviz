@@ -1,0 +1,21 @@
+.scene-map {
+	fill: none;
+	stroke: #0038b8;
+	stroke-width: 0.5;
+}
+
+.scene-edge {
+	fill: none;
+	stroke: #000000;
+	stroke-width: 0.75;
+}
+
+.scene-node {
+	fill: #FF0000;
+}
+
+.scene-label {
+	font-family: sans-serif;
+	font-size: 11px;
+	fill: #3c373d;
+}
