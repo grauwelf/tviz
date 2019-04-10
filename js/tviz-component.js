@@ -86,6 +86,10 @@ TvizFlowMap.prototype.render = function () {
                 'coordinates': d.path
             });
         });
+   
+    var tooltip = d3.tip().html(function(d) {
+        return d.type == 'node' ? '<em>' + 'צומת' + '</em>' : d.name;
+    }).attr('class', 'scene-node-tooltip');
     
     var stations = this.container.selectAll('.scene-node')
         .data(Object.values(network.nodes), function (d) { return d.name; })
@@ -96,6 +100,10 @@ TvizFlowMap.prototype.render = function () {
         })
         .attr('cx', function (d) { return d.x; })
         .attr('cy', function (d) { return d.y; })
-        .attr('r', 2);
+        .attr('r', 2)
+        .on('mouseover', tooltip.show)
+        .on('mouseout', tooltip.hide);
+    
+    stations.call(tooltip);
     
 }
