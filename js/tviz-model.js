@@ -81,16 +81,28 @@ function TvizModel() {
     self.load = function (value) {
         self.files = value;
         return new TvizDataLoader(self.files)
-            .done(function(mapData, nodesData, edgesData) {      
+            .done(function(mapData, stopsData, nodesData, edgesData) {      
                 self.map = mapData;
                 
                 var nodes = [];
-                nodesData.features.forEach(function (data) {
+                stopsData.features.forEach(function (data) {
                     data.id = data.properties.NODE_ID;
-                    data.name = data.properties.NODE_ID;                   
+                    data.name = data.properties.stop_name;
+                    data.type = 'stop';
                     data.x = data.geometry.coordinates[0];
                     data.y = data.geometry.coordinates[1];
                     nodes[data.id] = data;
+                });
+                
+                nodesData.features.forEach(function (data) {
+                    if (!nodes.hasOwnProperty(data.properties.NODE_ID)) {
+                        data.id = data.properties.NODE_ID;
+                        data.name = data.properties.NODE_ID;
+                        data.type = 'node';
+                        data.x = data.geometry.coordinates[0];
+                        data.y = data.geometry.coordinates[1];
+                        nodes[data.id] = data;
+                    }
                 });
                 
                 self.network.nodes = nodes;
@@ -100,6 +112,7 @@ function TvizModel() {
                     links.push({
                         //color: "#ff0000",
                         //line: "42",
+                        length: data.properties.LENGTH,
                         source: data.properties.FNODE_, 
                         target: data.properties.TNODE_,
                         path: data.geometry.coordinates

@@ -1,6 +1,6 @@
 /**
- * Visual component
- */
+ * Visual components 
+**/
 
 function TvizComponent(container, width, height) {
     if (arguments.length < 2) {
@@ -79,7 +79,6 @@ TvizFlowMap.prototype.render = function () {
         .data(network.links)
       .enter()
       .append('path')
-      //.attr('class', function (d) { return 'connect ' + d.line; })
         .attr('class', 'scene-edge')
         .attr('d', function(d) {
             return smoothPath({
@@ -92,11 +91,11 @@ TvizFlowMap.prototype.render = function () {
         .data(Object.values(network.nodes), function (d) { return d.name; })
       .enter()
       .append('circle')
-        //.attr('style', "fill: #ff0000")
-        //.attr('class', function (d) { return 'station middle station-label ' + d.id; })
-        .attr('class', 'scene-node')
+        .attr('class', function (d) { 
+            return d.type == 'stop' ? 'scene-stop' : 'scene-node'; 
+        })
         .attr('cx', function (d) { return d.x; })
         .attr('cy', function (d) { return d.y; })
-        .attr('r', 1);
+        .attr('r', 2);
     
 }
