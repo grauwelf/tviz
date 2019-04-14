@@ -81,7 +81,7 @@ function TvizModel() {
     self.load = function (value) {
         self.files = value;
         return new TvizDataLoader(self.files)
-            .done(function(mapData, stopsData, nodesData, edgesData) {      
+            .done(function(mapData, stopsData, nodesData, edgesData, loadData) {      
                 self.map = mapData;
                 
                 var nodes = [];
@@ -110,12 +110,11 @@ function TvizModel() {
                 var links = [];
                 edgesData.features.forEach(function (data) {
                     links.push({
-                        //color: "#ff0000",
-                        //line: "42",
                         length: data.properties.LENGTH,
                         source: data.properties.FNODE_, 
                         target: data.properties.TNODE_,
-                        path: data.geometry.coordinates
+                        path: data.geometry.coordinates,
+                        loads: d3.range(24)
                     });
                 });
                 links.forEach(function (link) {
@@ -132,4 +131,4 @@ function TvizModel() {
     };
     
     return self;
-}
+};

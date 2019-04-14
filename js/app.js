@@ -42,18 +42,19 @@ function zoomed() {
  */
 var tvizMap = new TvizFlowMap(g, svg.attr('width'), svg.attr('height'));
 
-var tvizModel = new TvizModel();
-tvizModel.projection = projection;
-tvizModel.load(['json!data/israel.geojson',
-    'json!data/stops.geojson',
-    'json!data/stations.geojson',
-    'json!data/links.geojson'])
+var tvizRailwayModel = new TvizModel();
+tvizRailwayModel.projection = projection;
+tvizRailwayModel.load([
+        'json!data/israel.geojson',
+        'json!data/stops.geojson',
+        'json!data/stations.geojson',
+        'json!data/links.geojson',
+        'json!data/loads.json'])
     .done(function() {
         tvizMap.projection = projection;
         tvizMap.data({
-            network: tvizModel.network, 
-            map: tvizModel.map
+            network: tvizRailwayModel.network, 
+            map: tvizRailwayModel.map
         });       
         tvizMap.render();
    });
-
