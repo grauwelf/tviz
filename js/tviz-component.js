@@ -67,10 +67,6 @@ TvizFlowMap.prototype.render = function (time) {
     var network = this.data().network;
     var map = this.data().map;
     
-    var margin = {top: 20, right: 20, bottom: 20, left: 20};
-    var width = this.dim.width - margin.left - margin.right;
-    var height = this.dim.height - margin.top - margin.bottom;      
-     
     var smoothPath = d3.geoPath().projection(this.projection);
     
     this.container.selectAll('.scene-map')

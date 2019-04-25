@@ -91,6 +91,7 @@ function TvizModel() {
                     data.type = 'stop';
                     data.x = data.geometry.coordinates[0];
                     data.y = data.geometry.coordinates[1];
+                    data.latlng = new L.LatLng(data.y, data.x);
                     nodes[data.id] = data;
                 });
                 
@@ -101,6 +102,7 @@ function TvizModel() {
                         data.type = 'node';
                         data.x = data.geometry.coordinates[0];
                         data.y = data.geometry.coordinates[1];
+                        data.latlng = new L.LatLng(data.y, data.x);
                         nodes[data.id] = data;
                     }
                 });

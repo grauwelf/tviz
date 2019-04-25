@@ -2,29 +2,78 @@
  * Entry point of application
  */
 
-// Initialize projection
-var projection = d3.geoMercator();
+/*
+ * Initialize Leaflet map
+ * Add tile layer and controls 
+ */
+var mapLink = '<a href="http://openstreetmap.org">OpenStreetMap</a>';
+var leafletMap = L.map('tviz-container').setView([31.77, 35.21], 8);
+L.tileLayer(
+    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; ' + mapLink + ' Contributors',
+        maxZoom: 18,
+    }).addTo(leafletMap);
+
+L.control
+    .scale({
+        imperial: false,
+        position: 'topleft'
+    })
+    .addTo(leafletMap);
 
 /*
- * Create SVG element inside given container.
- * SVG is created with basic zoom abilities.
- * Zoom works both with mouse-wheel and
- * double-click events. 
+ * Create SVG layer for Leaflet map and bind it.
  */
-var svg = d3.select('.container')
-  .append('svg')
-    .attr('width', 650)
-    .attr('height', 650)
-    .call(d3.zoom().scaleExtent([1/16, 16]).on('zoom', zoomed));    
 
-var g = svg.append('g'); 
+var svgLayer = L.svg();
+svgLayer.addTo(leafletMap);
 
-function zoomed() {
-    g.attr('transform', d3.event.transform);
+/*
+ * Create SVG element with basic <g> group inside given container.
+ */
+
+var svg = d3.select('.container').select('svg');
+var g = svg.select('g'); 
+
+/*
+ * Create D3 projection from (lat, lng) CRS to Leaflet map 
+ */
+function projectPoint(x, y) {
+    var point = leafletMap.latLngToLayerPoint(new L.LatLng(y, x));
+    this.stream.point(point.x, point.y);
+}
+
+var leafletPath = d3.geoPath().projection(d3.geoTransform({point: projectPoint}));
+
+// Create D3 Mercator projection
+var projection = d3.geoMercator();
+
+function update(event) {
+    var zoom = 8;
+    if (arguments.length != 0) {
+        zoom = 10;
+    }
+    g.selectAll('.scene-map')
+        .attr('d', leafletPath);
+    g.selectAll('.scene-edge')    
+        .attr('d', function(d) {
+            return leafletPath({
+                'type': 'LineString',
+                'coordinates': d.path
+            });
+        });
     g.selectAll('.scene-node,.scene-stop')
-        .attr('r', 4 / d3.event.transform.k)
-    g.selectAll('.scene-edge')
-        .style('stroke-width', 1.5 / d3.event.transform.k);
+        .attr('cx', function(d){
+            return leafletMap.latLngToLayerPoint(d.latlng).x;
+        })
+        .attr('cy', function(d){
+            return leafletMap.latLngToLayerPoint(d.latlng).y;
+        });       
+    
+//    g.selectAll('.scene-node,.scene-stop')
+//        .attr('r', 4 / d3.event.transform.k);
+//    g.selectAll('.scene-edge')
+//        .style('stroke-width', 1.5 / d3.event.transform.k);
 }
 
 /*
@@ -57,4 +106,10 @@ tvizRailwayModel.load([
             map: tvizRailwayModel.map
         });       
         tvizMap.render();
+
+        // Bind Leaflet map's event handlers
+        leafletMap.on("viewreset", update);
+        leafletMap.on("moveend", update);
+        update();
+
    });
