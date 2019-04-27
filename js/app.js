@@ -48,34 +48,6 @@ var leafletPath = d3.geoPath().projection(d3.geoTransform({point: projectPoint})
 // Create D3 Mercator projection
 var projection = d3.geoMercator();
 
-function update(event) {
-    var zoom = 8;
-    if (arguments.length != 0) {
-        zoom = 10;
-    }
-    g.selectAll('.scene-map')
-        .attr('d', leafletPath);
-    g.selectAll('.scene-edge')    
-        .attr('d', function(d) {
-            return leafletPath({
-                'type': 'LineString',
-                'coordinates': d.path
-            });
-        });
-    g.selectAll('.scene-node,.scene-stop')
-        .attr('cx', function(d){
-            return leafletMap.latLngToLayerPoint(d.latlng).x;
-        })
-        .attr('cy', function(d){
-            return leafletMap.latLngToLayerPoint(d.latlng).y;
-        });       
-    
-//    g.selectAll('.scene-node,.scene-stop')
-//        .attr('r', 4 / d3.event.transform.k);
-//    g.selectAll('.scene-edge')
-//        .style('stroke-width', 1.5 / d3.event.transform.k);
-}
-
 /*
  * Create main component for drawing and 
  * load data to main data model object.
@@ -108,8 +80,11 @@ tvizRailwayModel.load([
         tvizMap.render();
 
         // Bind Leaflet map's event handlers
-        leafletMap.on("viewreset", update);
-        leafletMap.on("moveend", update);
-        update();
-
+        leafletMap.on("viewreset", function(event) {
+            tvizMap.update(event, leafletMap, leafletPath);
+        });
+        leafletMap.on("moveend",  function(event) {
+            tvizMap.update(event, leafletMap, leafletPath);
+        });
+        tvizMap.update(false, leafletMap, leafletPath);       
    });

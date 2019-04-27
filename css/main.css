@@ -35,3 +35,7 @@
     border-radius: 10px;
     border: 1px solid #888a85;
 }
+
+.leaflet-pane > svg {
+    pointer-events: auto ;
+}

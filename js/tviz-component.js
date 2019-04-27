@@ -9,7 +9,7 @@ function TvizComponent(container, width, height) {
     }
     this.dim = {width: width, height: height};
     this.container = container;    
-    this.scene = container.append('scene');
+    this.zoom = null;    
     this._data = {network: {}, map: {}};
 }
 
@@ -35,8 +35,6 @@ TvizComponent.prototype.data = function(values) {
 TvizComponent.prototype.prepareData = function() {
     var map = this.data().map;
     var network = this.data().network;
-    // Multiplier 1.5 is needed to clip map of Israel
-    projection.fitSize([this.dim.width, 1.5*this.dim.height], map);
     
     var nodes = [];
     network.nodes.forEach(function (data) {
@@ -161,4 +159,52 @@ TvizFlowMap.prototype.render = function (time) {
     
     stations.call(tooltip);
     
+}
+
+TvizFlowMap.prototype.update = function (event, leaflet, path) {        
+    var previousZoom = this.zoom;
+    if (event == false) {
+        previousZoom = leaflet.getZoom();
+    }
+    this.zoom = leaflet.getZoom();
+    this.container.selectAll('.scene-map')
+        .attr('d', path);
+    this.container.selectAll('.scene-edge')    
+        .attr('d', function(d) {
+            return path({
+                'type': 'LineString',
+                'coordinates': d.path
+            });
+        });
+    this.container.selectAll('.scene-node,.scene-stop')
+        .attr('cx', function(d){
+            return leaflet.latLngToLayerPoint(d.latlng).x;
+        })
+        .attr('cy', function(d){
+            return leaflet.latLngToLayerPoint(d.latlng).y;
+        });    
+    
+    var zoomDiff = this.zoom - previousZoom;
+    g.selectAll('.scene-node,.scene-stop')
+        .attr('r', function(d) {
+            var currentRadius = Number.parseFloat(d3.select(this).attr('r'));
+            var radiusMultiplier = 1;
+            if (zoomDiff > 0) {
+                radiusMultiplier = 1.3;
+            } else if (zoomDiff < 0) {
+                radiusMultiplier = 0.7;
+            }
+            return currentRadius * radiusMultiplier;    
+        });
+    g.selectAll('.scene-edge')
+        .style('stroke-width', function(d) {
+            var currentWidth = Number.parseFloat(d3.select(this).style('stroke-width'));
+            var multiplier = 1;
+            if (zoomDiff > 0) {
+                multiplier = 1.1;
+            } else if (zoomDiff < 0) {
+                multiplier = 0.9;
+            }
+            return currentWidth * multiplier;
+        });
 }
