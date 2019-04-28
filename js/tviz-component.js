@@ -106,7 +106,7 @@ TvizFlowMap.prototype.render = function (time) {
             var circle = g.append('circle')
                 .attr('class', 'vehicle')
                 .attr('fill', '#ff0000')
-                .attr('r', 1);
+                .attr('r', 5);
             moveAlong(d3.select(this), circle, i+1, simulationRate);
         }
     });           
@@ -135,6 +135,17 @@ TvizFlowMap.prototype.render = function (time) {
         return function(t) {    
             atLength = direction === 1 ? (t * l) - offset : (l - (t * l)) + offset;
             var p = path.getPointAtLength(atLength);
+            /*
+            var plusLength = atLength + 2 < l ? atLength + 2 : l;
+            var minusLength = atLength > 2 ? atLength - 2 : 0;
+            var pPlus = path.getPointAtLength(plusLength);
+            var pMinus = path.getPointAtLength(minusLength);
+            var dX = pPlus.x - pMinus.x;
+            var dY = pPlus.y - pMinus.y;
+            var D = Math.sqrt(Math.pow(dX,2) + Math.pow(dY,2));
+            p.x = p.x + 10*dX / D;
+            p.y = p.y + 10*dY / D;            
+            */
             return 'translate(' + p.x + ',' + p.y + ')';
         };
       };
